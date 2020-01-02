@@ -114,9 +114,17 @@ class Pong {
       this.ball.velocity.y = -this.ball.velocity.y;
     }
 
+    // Player 2 (AI) will follow the ball. - Very simple and unfair AI, will look to improve eventually.
+    this.players[1].position.y = this.ball.position.y;
+
     this.draw();
   }
 }
 
 const CANVAS = document.querySelector("canvas");
 const pong = new Pong(CANVAS);
+
+// Player 1 moves paddle with mouse.
+CANVAS.addEventListener("mousemove", event => {
+  pong.players[0].position.y = event.offsetY;
+});
