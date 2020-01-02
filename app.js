@@ -94,7 +94,11 @@ class Pong {
       player.top < ball.bottom &&
       player.bottom > ball.top
     ) {
+      // Whenever ball hits paddle, slightly change y-axis direction and increase speed.
+      const length = ball.velocity.length;
       ball.velocity.x = -ball.velocity.x;
+      ball.velocity.y += 300 * (Math.random() - 0.5);
+      ball.velocity.length = length * 1.05;
     }
   }
 
