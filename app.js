@@ -80,6 +80,17 @@ class Pong {
     callback();
   }
 
+  collide(player, ball) {
+    if (
+      player.left < ball.right &&
+      player.right > ball.left &&
+      player.top < ball.bottom &&
+      player.bottom > ball.top
+    ) {
+      ball.velocity.x = -ball.velocity.x;
+    }
+  }
+
   draw() {
     // Draw game screen.
     this._context.fillStyle = "black";
@@ -116,6 +127,8 @@ class Pong {
 
     // Player 2 (AI) will follow the ball. - Very simple and unfair AI, will look to improve eventually.
     this.players[1].position.y = this.ball.position.y;
+
+    this.players.forEach(player => this.collide(player, this.ball));
 
     this.draw();
   }
