@@ -1,2 +1,3 @@
 # Pong
-A simple implementation of Pong
+
+A simple single-player implementation of the game Pong in JavaScript.
