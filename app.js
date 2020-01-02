@@ -83,6 +83,38 @@ class Pong {
     };
     callback();
 
+    // Hold the characters for the score.
+    this.CHAR_PIXEL = 10;
+    this.CHARS = [
+      "111101101101111",
+      "010010010010010",
+      "111001111100111",
+      "111001111001111",
+      "101101111001001",
+      "111100111001111",
+      "111100111101111",
+      "111001001001001",
+      "111101111101111",
+      "111101111001111"
+    ].map(str => {
+      const canvas = document.createElement("canvas");
+      canvas.height = this.CHAR_PIXEL * 5;
+      canvas.width = this.CHAR_PIXEL * 3;
+      const context = canvas.getContext("2d");
+      context.fillStyle = "white";
+      str.split("").forEach((fill, i) => {
+        if (fill === "1") {
+          context.fillRect(
+            (i % 3) * this.CHAR_PIXEL,
+            ((i / 3) | 0) * this.CHAR_PIXEL,
+            this.CHAR_PIXEL,
+            this.CHAR_PIXEL
+          );
+        }
+      });
+      return canvas;
+    });
+
     this.reset();
   }
 
@@ -112,6 +144,8 @@ class Pong {
 
     // Draw players.
     this.players.forEach(player => this.drawRectangle(player));
+
+    this.drawScore();
   }
 
   drawRectangle(rectangle) {
@@ -122,6 +156,25 @@ class Pong {
       rectangle.size.x,
       rectangle.size.y
     );
+  }
+
+  // Draw the player scores.
+  drawScore() {
+    const align = this._canvas.width / 3;
+    const CHAR_WIDTH = this.CHAR_PIXEL * 4;
+    this.players.forEach((player, index) => {
+      const chars = player.score.toString().split("");
+      const offset =
+        align * (index + 1) -
+        ((CHAR_WIDTH * chars.length) / 2 + this.CHAR_PIXEL) / 2;
+      chars.forEach((char, position) => {
+        this._context.drawImage(
+          this.CHARS[char | 0],
+          offset + position * CHAR_WIDTH,
+          20
+        );
+      });
+    });
   }
 
   // Reset game state.
@@ -162,8 +215,7 @@ class Pong {
 
     // Player 2 (AI) will follow the ball. - Very simple and unfair AI, will look to improve eventually.
     this.players[1].position.y = this.ball.position.y;
-
-    //
+    // Handle ball collision with the player's paddles.
     this.players.forEach(player => this.collide(player, this.ball));
 
     this.draw();
@@ -178,6 +230,7 @@ CANVAS.addEventListener("mousemove", event => {
   pong.players[0].position.y = event.offsetY;
 });
 
+// Start the round whenever the canvas is clicked.
 CANVAS.addEventListener("click", event => {
   pong.start();
 });
