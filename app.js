@@ -4,6 +4,16 @@ class Vector {
     this.x = x;
     this.y = y;
   }
+
+  get length() {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+  }
+
+  set length(value) {
+    const factor = value / this.length;
+    this.x *= factor;
+    this.y *= factor;
+  }
 }
 
 // Class to create a shape.
@@ -76,6 +86,7 @@ class Pong {
     this.reset();
   }
 
+  // Handle ball / paddle collision.
   collide(player, ball) {
     if (
       player.left < ball.right &&
@@ -109,13 +120,24 @@ class Pong {
     );
   }
 
+  // Reset game state.
   reset() {
     // Set initial position of the ball.
-    this.ball.position.x = 200;
-    this.ball.position.y = 100;
+    this.ball.position.x = this._canvas.width / 2;
+    this.ball.position.y = this._canvas.height / 2;
     // Set the initial velocity of the ball.
-    this.ball.velocity.x = 150;
-    this.ball.velocity.y = 150;
+    this.ball.velocity.x = 0;
+    this.ball.velocity.y = 0;
+  }
+
+  // Handle the starting of a round.
+  start() {
+    if (this.ball.velocity.x === 0 && this.ball.velocity.y === 0) {
+      // Randomise the velocity of the ball.
+      this.ball.velocity.x = 300 * (Math.random() > 0.5 ? 1 : -1);
+      this.ball.velocity.y = 300 * (Math.random() * 2 - 1);
+      this.ball.velocity.length = 200;
+    }
   }
 
   update(deltaTime) {
@@ -137,6 +159,7 @@ class Pong {
     // Player 2 (AI) will follow the ball. - Very simple and unfair AI, will look to improve eventually.
     this.players[1].position.y = this.ball.position.y;
 
+    //
     this.players.forEach(player => this.collide(player, this.ball));
 
     this.draw();
@@ -149,4 +172,8 @@ const pong = new Pong(CANVAS);
 // Player 1 moves paddle with mouse.
 CANVAS.addEventListener("mousemove", event => {
   pong.players[0].position.y = event.offsetY;
+});
+
+CANVAS.addEventListener("click", event => {
+  pong.start();
 });
