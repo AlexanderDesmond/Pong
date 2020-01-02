@@ -38,6 +38,13 @@ class Ball extends Rectangle {
   }
 }
 
+class Player extends Rectangle {
+  constructor() {
+    super(20, 200);
+    this.score = 0;
+  }
+}
+
 class Pong {
   constructor(canvas) {
     this._canvas = canvas;
@@ -52,6 +59,14 @@ class Pong {
     // Set the initial velocity of the ball.
     this.ball.velocity.x = 150;
     this.ball.velocity.y = 150;
+
+    // Create players.
+    this.players = [new Player(), new Player()];
+    this.players[0].position.x = 90;
+    this.players[1].position.x = this._canvas.width - 90;
+    this.players.forEach(player => {
+      player.position.y = this._canvas.height / 2;
+    });
 
     let lastTime;
     const callback = miliseconds => {
@@ -72,13 +87,16 @@ class Pong {
 
     // Draw ball.
     this.drawRectangle(this.ball);
+
+    // Draw players.
+    this.players.forEach(player => this.drawRectangle(player));
   }
 
   drawRectangle(rectangle) {
     this._context.fillStyle = "white";
     this._context.fillRect(
-      rectangle.position.x,
-      rectangle.position.y,
+      rectangle.left,
+      rectangle.top,
       rectangle.size.x,
       rectangle.size.y
     );
