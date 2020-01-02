@@ -227,6 +227,9 @@ const pong = new Pong(CANVAS);
 
 // Player 1 moves paddle with mouse.
 CANVAS.addEventListener("mousemove", event => {
+  //const scale = event.offsetY / event.target.getBoundingClientRect().height;
+  //pong.players[0].position.y = CANVAS.height * scale;
+
   pong.players[0].position.y = event.offsetY;
 });
 
