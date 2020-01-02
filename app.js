@@ -52,13 +52,7 @@ class Pong {
     this._canvas.width = 1200;
     this._canvas.height = 800;
 
-    // Set initial position of the ball.
     this.ball = new Ball();
-    this.ball.position.x = 200;
-    this.ball.position.y = 100;
-    // Set the initial velocity of the ball.
-    this.ball.velocity.x = 150;
-    this.ball.velocity.y = 150;
 
     // Create players.
     this.players = [new Player(), new Player()];
@@ -78,6 +72,8 @@ class Pong {
       requestAnimationFrame(callback);
     };
     callback();
+
+    this.reset();
   }
 
   collide(player, ball) {
@@ -113,13 +109,26 @@ class Pong {
     );
   }
 
+  reset() {
+    // Set initial position of the ball.
+    this.ball.position.x = 200;
+    this.ball.position.y = 100;
+    // Set the initial velocity of the ball.
+    this.ball.velocity.x = 150;
+    this.ball.velocity.y = 150;
+  }
+
   update(deltaTime) {
     // Update the ball's position.
     this.ball.position.x += this.ball.velocity.x * deltaTime;
     this.ball.position.y += this.ball.velocity.y * deltaTime;
 
     if (this.ball.left < 0 || this.ball.right > this._canvas.width) {
-      this.ball.velocity.x = -this.ball.velocity.x;
+      const playerId = (this.ball.velocity.x < 0) | 0;
+      this.players[playerId].score++;
+      this.reset();
+      console.log(playerId);
+      //this.ball.velocity.x = -this.ball.velocity.x;
     }
     if (this.ball.top < 0 || this.ball.bottom > this._canvas.height) {
       this.ball.velocity.y = -this.ball.velocity.y;
