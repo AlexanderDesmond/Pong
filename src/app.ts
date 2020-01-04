@@ -1,6 +1,8 @@
 // Class to contain coordinates.
 class Vector {
-  constructor(x = 0, y = 0) {
+  x: number;
+  y: number;
+  constructor(x: number = 0, y: number = 0) {
     this.x = x;
     this.y = y;
   }
@@ -9,7 +11,7 @@ class Vector {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
-  set length(value) {
+  set length(value: number) {
     const factor = value / this.length;
     this.x *= factor;
     this.y *= factor;
@@ -18,7 +20,9 @@ class Vector {
 
 // Class to create a shape.
 class Rectangle {
-  constructor(width, height) {
+  position: Vector;
+  size: Vector;
+  constructor(width: number, height: number) {
     this.position = new Vector();
     this.size = new Vector(width, height);
   }
@@ -42,6 +46,7 @@ class Rectangle {
 
 // Class to create a ball.
 class Ball extends Rectangle {
+  velocity: Vector;
   constructor() {
     super(10, 10);
     this.velocity = new Vector();
@@ -49,6 +54,7 @@ class Ball extends Rectangle {
 }
 
 class Player extends Rectangle {
+  score: number;
   constructor() {
     super(20, 200);
     this.score = 0;
@@ -56,7 +62,13 @@ class Player extends Rectangle {
 }
 
 class Pong {
-  constructor(canvas) {
+  _canvas: HTMLCanvasElement;
+  _context: CanvasRenderingContext2D;
+  ball: Ball;
+  players: Player[];
+  CHAR_PIXEL: number;
+  CHARS: HTMLCanvasElement[];
+  constructor(canvas: HTMLCanvasElement) {
     this._canvas = canvas;
     this._context = canvas.getContext("2d");
     this._canvas.width = 1200;
@@ -72,8 +84,8 @@ class Pong {
       player.position.y = this._canvas.height / 2;
     });
 
-    let lastTime;
-    const callback = miliseconds => {
+    let lastTime: number;
+    const callback = (miliseconds = 0) => {
       if (lastTime) {
         this.update((miliseconds - lastTime) / 1000);
       }
@@ -119,7 +131,7 @@ class Pong {
   }
 
   // Handle ball / paddle collision.
-  collide(player, ball) {
+  collide(player: Player, ball: Ball) {
     if (
       player.left < ball.right &&
       player.right > ball.left &&
@@ -148,7 +160,7 @@ class Pong {
     this.drawScore();
   }
 
-  drawRectangle(rectangle) {
+  drawRectangle(rectangle: Rectangle) {
     this._context.fillStyle = "white";
     this._context.fillRect(
       rectangle.left,
@@ -169,7 +181,7 @@ class Pong {
         ((CHAR_WIDTH * chars.length) / 2 + this.CHAR_PIXEL) / 2;
       chars.forEach((char, position) => {
         this._context.drawImage(
-          this.CHARS[char | 0],
+          this.CHARS[Number(char) | 0],
           offset + position * CHAR_WIDTH,
           20
         );
@@ -197,13 +209,13 @@ class Pong {
     }
   }
 
-  update(deltaTime) {
+  update(deltaTime: number) {
     // Update the ball's position.
     this.ball.position.x += this.ball.velocity.x * deltaTime;
     this.ball.position.y += this.ball.velocity.y * deltaTime;
 
     if (this.ball.left < 0 || this.ball.right > this._canvas.width) {
-      const playerId = (this.ball.velocity.x < 0) | 0;
+      const playerId = Number(this.ball.velocity.x < 0) | 0;
       this.players[playerId].score++;
       this.reset();
       console.log(playerId);

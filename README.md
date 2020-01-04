@@ -1,3 +1,3 @@
 # Pong
 
-A simple single-player implementation of the game Pong in JavaScript.
+A simple single-player implementation of the game Pong in TypeScript.
